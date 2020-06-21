@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/nao4869/golang-bookstore-user-api/domain/users"
+	"github.com/nao4869/golang-bookstore-user-api/services"
 )
 
 // CreateUser -
@@ -35,10 +36,9 @@ func CreateUser(c *gin.Context) {
 		// TODO handle user creating error
 		return
 	}
-	fmt.Println("\n")
 	fmt.Println(user)
 
-	c.String(
+	c.JSON(
 		http.StatusCreated,
 		result,
 	)
