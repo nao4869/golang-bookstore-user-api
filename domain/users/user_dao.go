@@ -11,8 +11,8 @@ var (
 	usersDB = make(map[int64]*User)
 )
 
-// Get -
-func (user User) Get() *errors.RestError {
+// Get - user pointer in order to working on actual value in the memory
+func (user *User) Get() *errors.RestError {
 	result := usersDB[user.ID]
 	if result == nil {
 		return errors.NewNotFoundError(fmt.Sprintf("user %d not found", user.ID))
@@ -22,11 +22,25 @@ func (user User) Get() *errors.RestError {
 	user.LastName = result.LastName
 	user.Email = result.Email
 	user.DateCreated = result.DateCreated
-	
+
+	fmt.Println(user.ID)
+	fmt.Println(user.FirstName)
+	fmt.Println(user.LastName)
+	fmt.Println(user.Email)
+	fmt.Println(user.DateCreated)
+
 	return nil
 }
 
 // Save - save the user to the database
-func (user User) Save() *errors.RestError {
+func (user *User) Save() *errors.RestError {
+	current := usersDB[user.ID]
+	if current != nil {
+		if current.Email == user.Email {
+			return errors.NewBadRequestError("this email %s is already registered", user.Email)
+		}
+		return errors.NewBadRequestError("user %d already exists in DB", user.ID)
+	}
+	usersDB[user.ID] = user
 	return nil
 }
