@@ -28,7 +28,7 @@ func init() {
 		"root",
 		GetMySQLPassword(),
 		"127.0.0.1:3306",
-		"usersdb",
+		"users_db",
 	)
 
 	var err error
