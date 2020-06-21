@@ -2,6 +2,7 @@ package users
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/nao4869/golang-bookstore-user-api/utils/errors"
 )
@@ -41,6 +42,11 @@ func (user *User) Save() *errors.RestError {
 		}
 		return errors.NewBadRequestError(fmt.Sprintf("user %d already exists in DB", user.ID))
 	}
+
+	// retrieveing the time for created_date
+	currenTime := time.Now()
+	user.DateCreated = currenTime.Format("2019-01-02T15:04:052")
+
 	usersDB[user.ID] = user
 	return nil
 }
