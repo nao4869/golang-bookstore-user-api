@@ -28,11 +28,19 @@ func CreateUser(c *gin.Context) {
 		fmt.Println(error.Error())
 		return
 	}
+
+	// sending user to services CreateUser function
+	result, saveError := services.CreateUser(user)
+	if saveError != nil {
+		// TODO handle user creating error
+		return
+	}
+	fmt.Println("\n")
 	fmt.Println(user)
 
 	c.String(
-		http.StatusNotImplemented,
-		"Not implemented",
+		http.StatusCreated,
+		result,
 	)
 }
 
