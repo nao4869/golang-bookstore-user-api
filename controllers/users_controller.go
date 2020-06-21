@@ -53,9 +53,9 @@ func GetUser(c *gin.Context) {
 		return
 	}
 
-	c.String(
+	c.JSON(
 		http.StatusOK,
-		"Not implemented",
+		user,
 	)
 }
 
