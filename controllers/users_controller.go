@@ -3,6 +3,7 @@ package controllers
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/nao4869/golang-bookstore-user-api/domain/users"
@@ -38,6 +39,20 @@ func CreateUser(c *gin.Context) {
 
 // GetUser -
 func GetUser(c *gin.Context) {
+	// error handling for user_id
+	userID, userError := strconv.ParseInt(c.Param("user_id"), 10, 64)
+	if userError != nil {
+		error := errors.NewBadRequestError("user id should be a number")
+		c.JSON(error.Status, error)
+		return
+	}
+
+	user, getError := services.CreateUser(userID)
+	if getError != nil {
+		c.JSON(getError.Status)
+		return
+	}
+
 	c.String(
 		http.StatusNotImplemented,
 		"Not implemented",
