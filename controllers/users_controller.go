@@ -47,14 +47,14 @@ func GetUser(c *gin.Context) {
 		return
 	}
 
-	user, getError := services.CreateUser(userID)
+	user, getError := services.GetUser(userID)
 	if getError != nil {
-		c.JSON(getError.Status)
+		c.JSON(getError.Status, user)
 		return
 	}
 
 	c.String(
-		http.StatusNotImplemented,
+		http.StatusOK,
 		"Not implemented",
 	)
 }
