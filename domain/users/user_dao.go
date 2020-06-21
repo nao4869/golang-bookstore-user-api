@@ -17,7 +17,7 @@ func (user *User) Get() *errors.RestError {
 	if result == nil {
 		return errors.NewNotFoundError(fmt.Sprintf("user %d not found", user.ID))
 	}
-	user.ID == result.ID
+	user.ID = result.ID
 	user.FirstName = result.FirstName
 	user.LastName = result.LastName
 	user.Email = result.Email
