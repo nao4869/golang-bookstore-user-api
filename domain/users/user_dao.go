@@ -6,17 +6,11 @@ import (
 	// just for testing
 	_ "github.com/go-sql-driver/mysql"
 	usersdb "github.com/nao4869/golang-bookstore-user-api/datasources/mysql/users_db"
-	date "github.com/nao4869/golang-bookstore-user-api/utils/date_utils"
 	"github.com/nao4869/golang-bookstore-user-api/utils/errors"
 )
 
 const (
 	queryInsertUser = "INSERT INTO users(first_name, last_name, email, date_created) VALUES(?, ?, ?, ?, ?, ?);"
-)
-
-// mock user DB
-var (
-	usersDB = make(map[int64]*User)
 )
 
 // Get - user pointer in order to working on actual value in the memory
@@ -72,6 +66,6 @@ func (user *User) Save() *errors.RestError {
 		return errors.NewInternalServerError(fmt.Sprintf("error for saving the user: %s", error.Error()))
 	}
 	user.ID = userID // assigning last insert user id to User.ID
-	user.DateCreated = date.GetCurrentTimeString()
+	//user.DateCreated = date.GetCurrentTimeString()
 	return nil
 }
