@@ -13,5 +13,5 @@ func GetCurrentTime() time.Time {
 
 // GetCurrentTimeString -
 func GetCurrentTimeString() {
-	GetCurrentTime().Format(apiDateLayout)
+	return GetCurrentTime().Format(apiDateLayout)
 }
