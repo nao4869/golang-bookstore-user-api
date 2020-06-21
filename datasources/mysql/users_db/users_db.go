@@ -9,13 +9,14 @@ import (
 var (
 	// Client -
 	Client *sql.DB
+	mysqlRootPassword = MYSQL_ROOT_PASSWORD
 )
 
 func init() {
 	dataSourceName := fmt.Sprintf(
 		"%s:%s@tcp(%s)/%s?charset=utf8",
 		"root",
-		"root",
+		"mysqlRootPassword",
 		"127.0.0.1:3306",
 		"users_db",
 	)
