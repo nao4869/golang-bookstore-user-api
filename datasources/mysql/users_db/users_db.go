@@ -7,13 +7,13 @@ import (
 	"os"
 )
 
-var (
-	// Client -
-	Client            *sql.DB
+const (
 	mysqlRootPassword = "MYSQL_ROOT_PASSWORD"
 )
 
 var (
+	// Client -
+	Client        *sql.DB
 	mysqlPassword = os.Getenv(mysqlRootPassword)
 )
 
