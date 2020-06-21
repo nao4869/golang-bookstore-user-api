@@ -25,6 +25,7 @@ func CreateUser(c *gin.Context) {
 	// trying to use given bytes json to populate user struct
 	if error = json.Unmarshal(bytes, &user); error != nil {
 		// TODO handle JSON error
+		fmt.Println(error.Error())
 		return
 	}
 	fmt.Println(user)
