@@ -37,7 +37,7 @@ func (user *User) Get() *errors.RestError {
 
 // Save - save the user to the database
 func (user *User) Save() *errors.RestError {
-	if err = usersdb.Client.Ping(); err != nil {
+	if err := usersdb.Client.Ping(); err != nil {
 		panic(err)
 	}
 

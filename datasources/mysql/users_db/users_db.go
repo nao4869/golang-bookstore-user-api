@@ -7,6 +7,7 @@ import (
 )
 
 var (
+	// Client -
 	Client *sql.DB
 )
 
@@ -15,7 +16,7 @@ func init() {
 		"%s:%s@tcp(%s)/%s?charset=utf8",
 		"root",
 		"root",
-		"127.0.0.1",
+		"127.0.0.1:3306",
 		"users_db",
 	)
 
