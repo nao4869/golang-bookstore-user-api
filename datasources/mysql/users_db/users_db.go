@@ -9,7 +9,7 @@ import (
 var (
 	// Client -
 	Client *sql.DB
-	mysqlRootPassword = MYSQL_ROOT_PASSWORD
+	mysqlRootPassword = "MYSQL_ROOT_PASSWORD"
 )
 
 func init() {
