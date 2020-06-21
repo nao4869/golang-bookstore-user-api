@@ -4,19 +4,24 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"os"
 )
 
 var (
 	// Client -
-	Client *sql.DB
+	Client            *sql.DB
 	mysqlRootPassword = "MYSQL_ROOT_PASSWORD"
+)
+
+var (
+	mysqlPassword = os.Getenv(mysqlRootPassword)
 )
 
 func init() {
 	dataSourceName := fmt.Sprintf(
 		"%s:%s@tcp(%s)/%s?charset=utf8",
 		"root",
-		mysqlRootPassword,
+		"mysqlPassword",
 		"127.0.0.1:3306",
 		"usersdb",
 	)
