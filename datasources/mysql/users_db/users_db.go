@@ -17,11 +17,16 @@ var (
 	mysqlPassword = os.Getenv(mysqlRootPassword)
 )
 
+// GetMySQLPassword -
+func GetMySQLPassword() string {
+	return mysqlPassword
+}
+
 func init() {
 	dataSourceName := fmt.Sprintf(
 		"%s:%s@tcp(%s)/%s?charset=utf8",
 		"root",
-		"mysqlPassword",
+		GetMySQLPassword(),
 		"127.0.0.1:3306",
 		"usersdb",
 	)
