@@ -3,6 +3,8 @@ package users
 import (
 	"fmt"
 
+	// just for testing
+	_ "github.com/go-sql-driver/mysql"
 	date "github.com/nao4869/golang-bookstore-user-api/utils/date_utils"
 	"github.com/nao4869/golang-bookstore-user-api/utils/errors"
 )
