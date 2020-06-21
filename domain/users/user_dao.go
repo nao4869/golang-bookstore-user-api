@@ -10,6 +10,10 @@ import (
 	"github.com/nao4869/golang-bookstore-user-api/utils/errors"
 )
 
+const (
+	queryInsertUser = "INSERT INTO users(first_name, last_name, email, date_created) VALUES(?, ?, ?, ?);"
+)
+
 // mock user DB
 var (
 	usersDB = make(map[int64]*User)
@@ -38,20 +42,52 @@ func (user *User) Get() *errors.RestError {
 
 // Save - save the user to the database
 func (user *User) Save() *errors.RestError {
-	if err := usersdb.Client.Ping(); err != nil {
-		panic(err)
+	// insert new user to DB - creating statement connect to the DB so we must defer after communicating with it
+	statement, error := usersdb.Client.Prepare(queryInsertUser)
+	if error != nil {
+		return errors.NewInternalServerError(error.Error())
 	}
+	defer statement.Close()
 
-	current := usersDB[user.ID]
-	if current != nil {
-		if current.Email == user.Email {
-			return errors.NewBadRequestError(fmt.Sprintf("this email %s is already registered", user.Email))
-		}
-		return errors.NewBadRequestError(fmt.Sprintf("user %d already exists in DB", user.ID))
+	// result, error := users_db.Client.Exec(
+	// 	queryInsertUser,
+	// 	user.FirstName,
+	// 	user.LastName,
+	// 	user.Email,
+	// 	user.DateCreated,
+	// )
+
+	// Exec return Result & Error
+	insertResult, error := statement.Exec(
+		user.FirstName,
+		user.LastName,
+		user.Email,
+		user.DateCreated,
+	)
+	if error != nil {
+		return errors.NewInternalServerError(
+			fmt.Sprintf("error for saving the user: %s", error.Error())
+		)
 	}
-
-	user.DateCreated = date.GetCurrentTimeString()
-
-	usersDB[user.ID] = user
+	userID, error := insertResult.LastInsertId()
+	if error != nil {
+		return errors.NewInternalServerError(
+			fmt.Sprintf("error for saving the user: %s", error.Error())
+		)
+	}
+	user.ID = userID // assigning last insert user id to User.ID
 	return nil
+
+	// current := usersDB[user.ID]
+	// if current != nil {
+	// 	if current.Email == user.Email {
+	// 		return errors.NewBadRequestError(fmt.Sprintf("this email %s is already registered", user.Email))
+	// 	}
+	// 	return errors.NewBadRequestError(fmt.Sprintf("user %d already exists in DB", user.ID))
+	// }
+
+	// user.DateCreated = date.GetCurrentTimeString()
+
+	//usersDB[user.ID] = user
+	//return nil
 }
