@@ -9,6 +9,11 @@ import (
 	"github.com/nao4869/golang-bookstore-user-api/utils/errors"
 )
 
+// mock user DB
+var (
+	usersDB = make(map[int64]*User)
+)
+
 const (
 	queryInsertUser = "INSERT INTO users(first_name, last_name, email, date_created) VALUES(?, ?, ?, ?);"
 )
