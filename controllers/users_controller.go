@@ -18,7 +18,7 @@ func CreateUser(c *gin.Context) {
 		// TODO: return bad request to the console
 		restError := errors.RestError{
 			Message: "invalid json body",
-			Code:    http.StatusBadRequest,
+			Status:  http.StatusBadRequest,
 			Error:   "bad_request",
 		}
 		c.JSON(restError.Status, restError)
