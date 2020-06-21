@@ -65,29 +65,13 @@ func (user *User) Save() *errors.RestError {
 		user.DateCreated,
 	)
 	if error != nil {
-		return errors.NewInternalServerError(
-			fmt.Sprintf("error for saving the user: %s", error.Error())
-		)
+		return errors.NewInternalServerError(fmt.Sprintf("error for saving the user: %s", error.Error()))
 	}
 	userID, error := insertResult.LastInsertId()
 	if error != nil {
-		return errors.NewInternalServerError(
-			fmt.Sprintf("error for saving the user: %s", error.Error())
-		)
+		return errors.NewInternalServerError(fmt.Sprintf("error for saving the user: %s", error.Error()))
 	}
 	user.ID = userID // assigning last insert user id to User.ID
+	user.DateCreated = date.GetCurrentTimeString()
 	return nil
-
-	// current := usersDB[user.ID]
-	// if current != nil {
-	// 	if current.Email == user.Email {
-	// 		return errors.NewBadRequestError(fmt.Sprintf("this email %s is already registered", user.Email))
-	// 	}
-	// 	return errors.NewBadRequestError(fmt.Sprintf("user %d already exists in DB", user.ID))
-	// }
-
-	// user.DateCreated = date.GetCurrentTimeString()
-
-	//usersDB[user.ID] = user
-	//return nil
 }
