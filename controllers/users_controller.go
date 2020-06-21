@@ -1,12 +1,12 @@
 package controllers
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/internal/json"
 	"github.com/nao4869/golang-bookstore-user-api/domain/users"
 )
 
