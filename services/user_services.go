@@ -11,7 +11,5 @@ func CreateUser(user users.User) (*users.User, *errors.RestError) {
 	if error != users.Validate(&user); error != nil {
 		return nil, error
 	}
-	
-
 	return nil, nil
 }
