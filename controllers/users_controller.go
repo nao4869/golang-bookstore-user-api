@@ -1,9 +1,7 @@
 package controllers
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -14,19 +12,15 @@ import (
 // CreateUser -
 func CreateUser(c *gin.Context) {
 	var user users.User
-	fmt.Println(user)
-	bytes, error := ioutil.ReadAll(c.Request.Body)
-	fmt.Println(bytes)
-	fmt.Println(error)
-
-	if error != nil {
-		return
-	}
-
-	// trying to use given bytes json to populate user struct
-	if error = json.Unmarshal(bytes, &user); error != nil {
-		// TODO handle JSON error
-		fmt.Println(error.Error())
+	if error := c.ShouldBindJSON(&user); error != nil {
+		//fmt.Println(error)
+		// TODO: return bad request to the console
+		restError := errors.RestError{
+			Message: "invalid json body",
+			Code:    http.StatusBadRequest,
+			Error:   "bad_request",
+		}
+		c.JSON(restError.Status, restError)
 		return
 	}
 
