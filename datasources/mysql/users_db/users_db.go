@@ -2,6 +2,8 @@ package usersdb
 
 import (
 	"database/sql"
+	// test
+	_ "github.com/go-sql-driver/mysql"
 	"fmt"
 	"log"
 	"os"
