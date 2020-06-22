@@ -2,6 +2,7 @@ package users
 
 import (
 	"fmt"
+	"strings"
 
 	// just for testing
 	_ "github.com/go-sql-driver/mysql"
@@ -44,6 +45,7 @@ func (user *User) Get() *errors.RestError {
 func (user *User) Save() *errors.RestError {
 	// insert new user to DB - creating statement connect to the DB so we must defer after communicating with it
 	statement, error := usersdb.Client.Prepare(queryInsertUser)
+	fmt.Println(statement)
 	if error != nil {
 		return errors.NewInternalServerError(error.Error())
 	}
@@ -58,6 +60,9 @@ func (user *User) Save() *errors.RestError {
 		user.DateCreated,
 	)
 	if error != nil {
+		if strings.Contains(error.Error(), "email_UNIQUE") {
+			return errors.NewBadRequestError(fmt.Sprintf("email %s is already exists", user.Email))
+		}
 		return errors.NewInternalServerError(fmt.Sprintf("error for saving the user: %s", error.Error()))
 	}
 	userID, error := insertResult.LastInsertId()
