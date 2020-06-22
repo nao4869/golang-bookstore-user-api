@@ -2,12 +2,12 @@ package users
 
 import (
 	"fmt"
+	"log"
 	"strings"
 
 	// just for testing
 	_ "github.com/go-sql-driver/mysql"
 	usersdb "github.com/nao4869/golang-bookstore-user-api/datasources/mysql/users_db"
-	date "github.com/nao4869/golang-bookstore-user-api/utils/date_utils"
 	"github.com/nao4869/golang-bookstore-user-api/utils/errors"
 )
 
@@ -60,37 +60,32 @@ func (user *User) Get() *errors.RestError {
 }
 
 // Save - save the user to the database
-func (user *User) Save() *errors.RestError {
+func (user *User) Save() error {
 	// insert new user to DB - creating statement connect to the DB so we must defer after communicating with it
 	statement, error := usersdb.Client.Prepare(queryInsertUser)
-	//fmt.Println(statement)
 	if error != nil {
-		fmt.Println("Internal Server Error")
-		return errors.NewInternalServerError(fmt.Sprintf("error for getting the user", error.Error()))
+		return error
 	}
 	defer statement.Close()
-	user.DateCreated = date.GetCurrentTimeString()
 
 	// Exec return Result & Error
-	// insertResult, error := statement.Exec(
-	// 	user.FirstName,
-	// 	user.LastName,
-	// 	user.Email,
-	// 	user.DateCreated,
-	// )
+	insertResult, error := statement.Exec(
+		user.FirstName,
+		user.LastName,
+		user.Email,
+		user.DateCreated,
+	)
 	if error != nil {
 		if strings.Contains(error.Error(), "email_UNIQUE") {
-			return errors.NewBadRequestError(fmt.Sprintf("email %s is already exists", user.Email))
+			return error
 		}
-		fmt.Println("Internal Server Error - 2")
-		return errors.NewInternalServerError(fmt.Sprintf("error for saving the user: %s", error.Error()))
+		return error
 	}
-	//userID, error := insertResult.LastInsertId()
+	userID, error := insertResult.LastInsertId()
 	if error != nil {
-		fmt.Println("Internal Server Error - 3")
-		return errors.NewInternalServerError(fmt.Sprintf("error for saving the user: %s", error.Error()))
+		return error
 	}
-	//user.ID = userID // assigning last insert user id to User.ID
-	//user.DateCreated = date.GetCurrentTimeString()
+	user.ID = userID // assigning last insert user id to User.ID
+	log.Println("Save user data")
 	return nil
 }

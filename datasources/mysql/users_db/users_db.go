@@ -47,7 +47,7 @@ func GetMySQLSchema() string {
 
 func init() {
 	dataSourceName := fmt.Sprintf(
-		"%s:%s@tcp(%s)/%s?charset=utf8",
+		"%s:%s@tcp(%s)/%s?charset=utf8&parseTime=true",
 		GetMySQLUsername(),
 		GetMySQLPassword(),
 		GetMySQLHost(),
