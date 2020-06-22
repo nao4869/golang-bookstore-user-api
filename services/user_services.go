@@ -16,7 +16,7 @@ func GetUser(userID int64) (*users.User, *errors.RestError) {
 
 // CreateUser - must not return both users and errors - only return one
 // if we return nil, nil - this will cause many error in users_controllers when handling nil error and returing nil result etc
-func CreateUser(user users.User) (*users.User, *errors.RestError) {
+func CreateUser(user users.User) (*users.User, error) {
 	if error := user.Validate(); error != nil {
 		return nil, error
 	}
