@@ -68,14 +68,14 @@ func (user *User) Save() *errors.RestError {
 	// Exec return Result & Error
 	insertResult, saveError := statement.Exec(user.FirstName, user.LastName, user.Email, user.DateCreated)
 	if saveError != nil {
-		logger.Error("error when trying to save user", saveError)
-		return errors.NewInternalServerError("error when tying to save user", errors.New("database error"))
+		fmt.Println("error when trying to save user")
+		return errors.NewInternalServerError("error when tying to save user", errors.Error("database error"))
 	}
 
 	userID, err := insertResult.LastInsertId()
 	if err != nil {
-		logger.Error("error when trying to get last insert id after creating a new user", err)
-		return errors.NewInternalServerError("error when tying to save user", errors.New("database error"))
+		fmt.Println("error when trying to get last insert id after creating a new user")
+		return errors.NewInternalServerError("error when tying to save user", errors.Error("database error"))
 	}
 	user.ID = userID
 
