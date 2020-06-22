@@ -63,10 +63,10 @@ func (user *User) Get() *errors.RestError {
 func (user *User) Save() *errors.RestError {
 	// insert new user to DB - creating statement connect to the DB so we must defer after communicating with it
 	statement, error := usersdb.Client.Prepare(queryInsertUser)
-	fmt.Println(statement)
+	//fmt.Println(statement)
 	if error != nil {
 		fmt.Println("Internal Server Error")
-		return errors.NewInternalServerError(error.Error())
+		return errors.NewInternalServerError("error when tying to get user", errors.New("database error"))
 	}
 	defer statement.Close()
 	user.DateCreated = date.GetCurrentTimeString()
