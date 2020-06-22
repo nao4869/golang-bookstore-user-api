@@ -5,7 +5,7 @@ import (
 
 	// just for testing
 	_ "github.com/go-sql-driver/mysql"
-	usersdb "github.com/nao4869/golang-bookstore-user-api/datasources/mysql/users_db"
+	"github.com/nao4869/golang-bookstore-user-api/datasources/mysql/users_db"
 	date "github.com/nao4869/golang-bookstore-user-api/utils/date_utils"
 	"github.com/nao4869/golang-bookstore-user-api/utils/errors"
 )
@@ -43,7 +43,7 @@ func (user *User) Get() *errors.RestError {
 // Save - save the user to the database
 func (user *User) Save() *errors.RestError {
 	// insert new user to DB - creating statement connect to the DB so we must defer after communicating with it
-	statement, error := usersdb.Client.Prepare(queryInsertUser)
+	statement, error := users_db.Client.Prepare(queryInsertUser)
 	if error != nil {
 		return errors.NewInternalServerError(error.Error())
 	}
