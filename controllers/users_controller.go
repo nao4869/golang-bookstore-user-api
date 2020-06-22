@@ -17,7 +17,7 @@ func CreateUser(c *gin.Context) {
 	if error := c.ShouldBindJSON(&user); error != nil {
 		// TODO: return bad request to the console
 		restError := errors.NewBadRequestError("invalid json body")
-		c.JSON(restError.Status, restError)
+		c.JSON(restError.Status(), restError)
 		return
 	}
 
@@ -26,7 +26,7 @@ func CreateUser(c *gin.Context) {
 	result, saveError := services.CreateUser(user)
 	if saveError != nil {
 		// TODO handle user creating error
-		c.JSON(saveError.Status, saveError)
+		c.JSON(saveError.Status(), saveError)
 		return
 	}
 	fmt.Println(user)
@@ -43,18 +43,18 @@ func GetUser(c *gin.Context) {
 	userID, userError := strconv.ParseInt(c.Param("user_id"), 10, 64)
 	if userError != nil {
 		error := errors.NewBadRequestError("user id should be a number")
-		c.JSON(error.Status, error)
+		c.JSON(error.Status(), error)
 		return
 	}
 
 	user, getError := services.GetUser(userID)
 	if getError != nil {
-		c.JSON(getError.Status, user)
+		c.JSON(getError.Status(), user)
 		return
 	}
 
 	c.JSON(
-		http.StatusOK,
+		http.StatusCreated,
 		user,
 	)
 }
