@@ -66,7 +66,7 @@ func (user *User) Save() *errors.RestError {
 	//fmt.Println(statement)
 	if error != nil {
 		fmt.Println("Internal Server Error")
-		return errors.NewInternalServerError("error when tying to get user", errors.New("database error"))
+		return errors.NewInternalServerError(fmt.Sprintf("error for getting the user", error.Error()))
 	}
 	defer statement.Close()
 	user.DateCreated = date.GetCurrentTimeString()
