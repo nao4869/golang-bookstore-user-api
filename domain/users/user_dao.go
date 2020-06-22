@@ -6,8 +6,7 @@ import (
 
 	// just for testing
 	_ "github.com/go-sql-driver/mysql"
-	usersdb "github.com/nao4869/golang-bookstore-user-api/datasources/mysql/users_db"
-	date "github.com/nao4869/golang-bookstore-user-api/utils/date_utils"
+	users_db "github.com/nao4869/golang-bookstore-user-api/datasources/mysql/users_db"
 	"github.com/nao4869/golang-bookstore-user-api/utils/errors"
 )
 
@@ -62,28 +61,23 @@ func (user *User) Get() *errors.RestError {
 // Save - save the user to the database
 func (user *User) Save() *errors.RestError {
 	// insert new user to DB - creating statement connect to the DB so we must defer after communicating with it
-	statement, error := usersdb.Client.Prepare(queryInsertUser)
+	statement, error := users_db.Client.Prepare(queryInsertUser)
 	defer statement.Close()
-	user.DateCreated = date.GetCurrentTimeString()
+	//user.DateCreated = date.GetCurrentTimeString()
 
 	// Exec return Result & Error
-	insertResult, error := statement.Exec(
-		user.FirstName,
-		user.LastName,
-		user.Email,
-		user.DateCreated,
-	)
-	if error != nil {
-		if strings.Contains(error.Error(), "email_UNIQUE") {
-			return errors.NewBadRequestError(fmt.Sprintf("email %s is already exists", user.Email))
-		}
-		return errors.NewInternalServerError(fmt.Sprintf("error for saving the user: %s", error.Error()))
+	insertResult, saveError := statement.Exec(user.FirstName, user.LastName, user.Email, user.DateCreated)
+	if saveError != nil {
+		logger.Error("error when trying to save user", saveError)
+		return errors.NewInternalServerError("error when tying to save user", errors.New("database error"))
 	}
-	userID, error := insertResult.LastInsertId()
-	if error != nil {
-		return errors.NewInternalServerError(fmt.Sprintf("error for saving the user: %s", error.Error()))
+
+	userID, err := insertResult.LastInsertId()
+	if err != nil {
+		logger.Error("error when trying to get last insert id after creating a new user", err)
+		return errors.NewInternalServerError("error when tying to save user", errors.New("database error"))
 	}
-	user.ID = userID // assigning last insert user id to User.ID
-	//user.DateCreated = date.GetCurrentTimeString()
+	user.ID = userID
+
 	return nil
 }
