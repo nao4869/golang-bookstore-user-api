@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -29,7 +28,7 @@ func CreateUser(c *gin.Context) {
 		c.JSON(saveError.Status, saveError)
 		return
 	}
-	fmt.Println(user)
+	//fmt.Println(user)
 
 	c.JSON(
 		http.StatusCreated,

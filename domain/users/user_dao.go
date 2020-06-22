@@ -2,12 +2,12 @@ package users
 
 import (
 	"fmt"
-	"log"
 	"strings"
 
 	// just for testing
 	_ "github.com/go-sql-driver/mysql"
 	usersdb "github.com/nao4869/golang-bookstore-user-api/datasources/mysql/users_db"
+	date "github.com/nao4869/golang-bookstore-user-api/utils/date_utils"
 	"github.com/nao4869/golang-bookstore-user-api/utils/errors"
 )
 
@@ -21,13 +21,13 @@ type User struct {
 }
 
 // Validate - assigning Validate method to user struct
-// func (user *User) Validate() *errors.RestError {
-// 	user.Email = strings.TrimSpace(strings.ToLower(user.Email))
-// 	if user.Email == "" {
-// 		return errors.NewBadRequestError("invalid email address")
-// 	}
-// 	return nil
-// }
+func (user *User) Validate() *errors.RestError {
+	user.Email = strings.TrimSpace(strings.ToLower(user.Email))
+	if user.Email == "" {
+		return errors.NewBadRequestError("invalid email address")
+	}
+	return nil
+}
 
 // mock user DB
 var (
@@ -60,13 +60,11 @@ func (user *User) Get() *errors.RestError {
 }
 
 // Save - save the user to the database
-func (user *User) Save() error {
+func (user *User) Save() *errors.RestError {
 	// insert new user to DB - creating statement connect to the DB so we must defer after communicating with it
 	statement, error := usersdb.Client.Prepare(queryInsertUser)
-	if error != nil {
-		return error
-	}
 	defer statement.Close()
+	user.DateCreated = date.GetCurrentTimeString()
 
 	// Exec return Result & Error
 	insertResult, error := statement.Exec(
@@ -77,15 +75,15 @@ func (user *User) Save() error {
 	)
 	if error != nil {
 		if strings.Contains(error.Error(), "email_UNIQUE") {
-			return error
+			return errors.NewBadRequestError(fmt.Sprintf("email %s is already exists", user.Email))
 		}
-		return error
+		return errors.NewInternalServerError(fmt.Sprintf("error for saving the user: %s", error.Error()))
 	}
 	userID, error := insertResult.LastInsertId()
 	if error != nil {
-		return error
+		return errors.NewInternalServerError(fmt.Sprintf("error for saving the user: %s", error.Error()))
 	}
 	user.ID = userID // assigning last insert user id to User.ID
-	log.Println("Save user data")
+	//user.DateCreated = date.GetCurrentTimeString()
 	return nil
 }
