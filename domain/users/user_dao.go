@@ -72,12 +72,12 @@ func (user *User) Save() *errors.RestError {
 	user.DateCreated = date.GetCurrentTimeString()
 
 	// Exec return Result & Error
-	insertResult, error := statement.Exec(
-		user.FirstName,
-		user.LastName,
-		user.Email,
-		user.DateCreated,
-	)
+	// insertResult, error := statement.Exec(
+	// 	user.FirstName,
+	// 	user.LastName,
+	// 	user.Email,
+	// 	user.DateCreated,
+	// )
 	if error != nil {
 		if strings.Contains(error.Error(), "email_UNIQUE") {
 			return errors.NewBadRequestError(fmt.Sprintf("email %s is already exists", user.Email))
@@ -85,12 +85,12 @@ func (user *User) Save() *errors.RestError {
 		fmt.Println("Internal Server Error - 2")
 		return errors.NewInternalServerError(fmt.Sprintf("error for saving the user: %s", error.Error()))
 	}
-	userID, error := insertResult.LastInsertId()
+	//userID, error := insertResult.LastInsertId()
 	if error != nil {
 		fmt.Println("Internal Server Error - 3")
 		return errors.NewInternalServerError(fmt.Sprintf("error for saving the user: %s", error.Error()))
 	}
-	user.ID = userID // assigning last insert user id to User.ID
+	//user.ID = userID // assigning last insert user id to User.ID
 	//user.DateCreated = date.GetCurrentTimeString()
 	return nil
 }
