@@ -47,6 +47,7 @@ func (user *User) Save() *errors.RestError {
 	statement, error := usersdb.Client.Prepare(queryInsertUser)
 	fmt.Println(statement)
 	if error != nil {
+		fmt.Println("Internal Server Error")
 		return errors.NewInternalServerError(error.Error())
 	}
 	defer statement.Close()
@@ -63,10 +64,12 @@ func (user *User) Save() *errors.RestError {
 		if strings.Contains(error.Error(), "email_UNIQUE") {
 			return errors.NewBadRequestError(fmt.Sprintf("email %s is already exists", user.Email))
 		}
+		fmt.Println("Internal Server Error - 2")
 		return errors.NewInternalServerError(fmt.Sprintf("error for saving the user: %s", error.Error()))
 	}
 	userID, error := insertResult.LastInsertId()
 	if error != nil {
+		fmt.Println("Internal Server Error - 3")
 		return errors.NewInternalServerError(fmt.Sprintf("error for saving the user: %s", error.Error()))
 	}
 	user.ID = userID // assigning last insert user id to User.ID
