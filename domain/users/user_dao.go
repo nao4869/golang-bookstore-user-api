@@ -21,13 +21,13 @@ type User struct {
 }
 
 // Validate - assigning Validate method to user struct
-func (user *User) Validate() *errors.RestError {
-	user.Email = strings.TrimSpace(strings.ToLower(user.Email))
-	if user.Email == "" {
-		return errors.NewBadRequestError("invalid email address")
-	}
-	return nil
-}
+// func (user *User) Validate() *errors.RestError {
+// 	user.Email = strings.TrimSpace(strings.ToLower(user.Email))
+// 	if user.Email == "" {
+// 		return errors.NewBadRequestError("invalid email address")
+// 	}
+// 	return nil
+// }
 
 // mock user DB
 var (
