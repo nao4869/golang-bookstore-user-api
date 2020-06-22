@@ -6,6 +6,7 @@ import (
 	// just for testing
 	_ "github.com/go-sql-driver/mysql"
 	usersdb "github.com/nao4869/golang-bookstore-user-api/datasources/mysql/users_db"
+	date "github.com/nao4869/golang-bookstore-user-api/utils/date_utils"
 	"github.com/nao4869/golang-bookstore-user-api/utils/errors"
 )
 
@@ -47,14 +48,7 @@ func (user *User) Save() *errors.RestError {
 		return errors.NewInternalServerError(error.Error())
 	}
 	defer statement.Close()
-
-	// result, error := users_db.Client.Exec(
-	// 	queryInsertUser,
-	// 	user.FirstName,
-	// 	user.LastName,
-	// 	user.Email,
-	// 	user.DateCreated,
-	// )
+	user.DateCreated = date.GetCurrentTimeString()
 
 	// Exec return Result & Error
 	insertResult, error := statement.Exec(
