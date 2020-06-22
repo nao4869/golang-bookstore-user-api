@@ -69,13 +69,13 @@ func (user *User) Save() *errors.RestError {
 	insertResult, saveError := statement.Exec(user.FirstName, user.LastName, user.Email, user.DateCreated)
 	if saveError != nil {
 		fmt.Println("error when trying to save user")
-		return errors.NewInternalServerError("error when tying to save user", errors.Error("database error"))
+		return errors.NewInternalServerError(fmt.Sprintf("error for saving user", error.Error()))
 	}
 
 	userID, err := insertResult.LastInsertId()
 	if err != nil {
 		fmt.Println("error when trying to get last insert id after creating a new user")
-		return errors.NewInternalServerError("error when tying to save user", errors.Error("database error"))
+		return errors.NewInternalServerError(fmt.Sprintf("error for saving the user to DB", error.Error()))
 	}
 	user.ID = userID
 
