@@ -61,15 +61,15 @@ func (user *User) Get() *errors.RestError {
 // Save - save the user to the database
 func (user *User) Save() *errors.RestError {
 	// insert new user to DB - creating statement connect to the DB so we must defer after communicating with it
-	statement, error := users_db.Client.Prepare(queryInsertUser)
+	stmt, error := users_db.Client.Prepare(queryInsertUser)
 	if error != nil {
 		fmt.Println("error when trying to prepare save user statement")
 		return errors.NewInternalServerError(fmt.Sprintf("error for saving user", error.Error()))
 	}
-	defer statement.Close()
+	defer stmt.Close()
 
 	// Exec return Result & Error
-	insertResult, saveError := statement.Exec(user.FirstName, user.LastName, user.Email, user.DateCreated)
+	insertResult, saveError := stmt.Exec(user.FirstName, user.LastName, user.Email, user.DateCreated)
 	if saveError != nil {
 		fmt.Println("error when trying to save user")
 		return errors.NewInternalServerError(fmt.Sprintf("error for saving user", error.Error()))
