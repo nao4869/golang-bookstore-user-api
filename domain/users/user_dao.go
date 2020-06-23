@@ -6,7 +6,7 @@ import (
 
 	// just for testing
 	_ "github.com/go-sql-driver/mysql"
-	users_db "github.com/nao4869/golang-bookstore-user-api/datasources/mysql/users_db"
+	_ "github.com/nao4869/golang-bookstore-user-api/datasources/mysql/users_db"
 	"github.com/nao4869/golang-bookstore-user-api/utils/errors"
 )
 
@@ -60,27 +60,38 @@ func (user *User) Get() *errors.RestError {
 
 // Save - save the user to the database
 func (user *User) Save() *errors.RestError {
-	// insert new user to DB - creating statement connect to the DB so we must defer after communicating with it
-	stmt, error := users_db.Client.Prepare(queryInsertUser)
-	if error != nil {
-		fmt.Println("error when trying to prepare save user statement")
-		return errors.NewInternalServerError(fmt.Sprintf("error for saving user", error.Error()))
+	// save to local mock DB for development purpose
+	current := usersDB[user.ID]
+	if current != nil {
+		if current.Email == user.Email {
+			return errors.NewBadRequestError(fmt.Sprintf("this email %s is already registered", user.Email))
+		}
+		return errors.NewBadRequestError(fmt.Sprintf("user %d already exists in DB", user.ID))
 	}
-	defer stmt.Close()
-
-	// Exec return Result & Error
-	insertResult, saveError := stmt.Exec(user.FirstName, user.LastName, user.Email, user.DateCreated)
-	if saveError != nil {
-		fmt.Println("error when trying to save user")
-		return errors.NewInternalServerError(fmt.Sprintf("error for saving user", error.Error()))
-	}
-
-	userID, err := insertResult.LastInsertId()
-	if err != nil {
-		fmt.Println("error when trying to get last insert id after creating a new user")
-		return errors.NewInternalServerError(fmt.Sprintf("error for saving the user to DB", error.Error()))
-	}
-	user.ID = userID
-
+	usersDB[user.ID] = user
 	return nil
+	
+	// insert new user to DB - creating statement connect to the DB so we must defer after communicating with it
+	// stmt, error := users_db.Client.Prepare(queryInsertUser)
+	// if error != nil {
+	// 	fmt.Println("error when trying to prepare save user statement")
+	// 	return errors.NewInternalServerError(fmt.Sprintf("error for saving user", error.Error()))
+	// }
+	// defer stmt.Close()
+
+	// // Exec return Result & Error
+	// insertResult, saveError := stmt.Exec(user.FirstName, user.LastName, user.Email, user.DateCreated)
+	// if saveError != nil {
+	// 	fmt.Println("error when trying to save user")
+	// 	return errors.NewInternalServerError(fmt.Sprintf("error for saving user", error.Error()))
+	// }
+
+	// userID, err := insertResult.LastInsertId()
+	// if err != nil {
+	// 	fmt.Println("error when trying to get last insert id after creating a new user")
+	// 	return errors.NewInternalServerError(fmt.Sprintf("error for saving the user to DB", error.Error()))
+	// }
+	// user.ID = userID
+
+	// return nil
 }

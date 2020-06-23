@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -19,6 +20,8 @@ func CreateUser(c *gin.Context) {
 		c.JSON(restError.Status, restError)
 		return
 	}
+	fmt.Println("user nil check")
+	fmt.Println(user)
 
 	// sending user to services CreateUser function
 	// return either User or RestError but not both
