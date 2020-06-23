@@ -29,31 +29,42 @@ func (user *User) Validate() *errors.RestError {
 }
 
 // mock user DB
-var (
-	usersDB = make(map[int64]*User)
-)
+// var (
+// 	usersDB = make(map[int64]*User)
+// )
 
 const (
 	queryInsertUser = "INSERT INTO users(first_name, last_name, email, date_created) VALUES(?, ?, ?, ?);"
+	queryGetUser    = "SELECT id, first_name, last_name, email, date_created FROM users WHERE id=?;"
+	errorNoRows     = "no rows in result set"
 )
 
 // Get - user pointer in order to working on actual value in the memory
 func (user *User) Get() *errors.RestError {
-	result := usersDB[user.ID]
-	if result == nil {
-		return errors.NewNotFoundError(fmt.Sprintf("user %d not found", user.ID))
+	// connect to mysql DB
+	stmt, error := users_db.Client.Prepare(queryInsertUser)
+	if error != nil {
+		fmt.Println("error when trying to prepare save user statement")
+		return errors.NewInternalServerError(fmt.Sprintf("error for saving user", error.Error()))
 	}
-	user.ID = result.ID
-	user.FirstName = result.FirstName
-	user.LastName = result.LastName
-	user.Email = result.Email
-	user.DateCreated = result.DateCreated
+	defer stmt.Close()
 
-	fmt.Println(user.ID)
-	fmt.Println(user.FirstName)
-	fmt.Println(user.LastName)
-	fmt.Println(user.Email)
-	fmt.Println(user.DateCreated)
+	// the reason passing pointer is because we want to pass a copy but not updating the actual values
+	// query by user id and get single row
+	result := stmt.QueryRow(user.ID)
+	if error := result.Scan(
+		&user.ID,
+		&user.FirstName,
+		&user.LastName,
+		&user.Email,
+		&user.DateCreated,
+	); error != nil {
+		if strings.Contains(error.Error(), errorNoRows) {
+			return errors.NewNotFoundError(fmt.Sprintf("user %d not found", user.ID))
+		}
+		fmt.Println(error)
+		return errors.NewInternalServerError(fmt.Sprintf("error when trying to retrieve user %d", user.ID))
+	}
 
 	return nil
 }
@@ -67,18 +78,18 @@ func (user *User) Save() *errors.RestError {
 		return errors.NewInternalServerError(fmt.Sprintf("error for saving user", error.Error()))
 	}
 	defer stmt.Close()
-	
+
 	// Exec return Result & Error
 	insertResult, saveError := stmt.Exec(user.FirstName, user.LastName, user.Email, user.DateCreated)
 	if saveError != nil {
 		fmt.Println("error when trying to save user")
-		return errors.NewInternalServerError(fmt.Sprintf("error for saving user", error.Error()))
+		return errors.NewInternalServerError(fmt.Sprintf("error for saving user", saveError.Error()))
 	}
 
 	userID, err := insertResult.LastInsertId()
 	if err != nil {
 		fmt.Println("error when trying to get last insert id after creating a new user")
-		return errors.NewInternalServerError(fmt.Sprintf("error for saving the user to DB", error.Error()))
+		return errors.NewInternalServerError(fmt.Sprintf("error for saving the user to DB", err.Error()))
 	}
 	user.ID = userID
 
