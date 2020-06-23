@@ -66,7 +66,7 @@ func (user *User) Save() *errors.RestError {
 		fmt.Println("error when trying to prepare save user statement")
 		return errors.NewInternalServerError(fmt.Sprintf("error for saving user", error.Error()))
 	}
-	//defer stmt.Close()
+	defer stmt.Close()
 
 	// Exec return Result & Error
 	insertResult, saveError := stmt.Exec(user.FirstName, user.LastName, user.Email, user.DateCreated)
