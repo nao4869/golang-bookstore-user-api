@@ -70,28 +70,4 @@ func (user *User) Save() *errors.RestError {
 	}
 	usersDB[user.ID] = user
 	return nil
-	
-	// insert new user to DB - creating statement connect to the DB so we must defer after communicating with it
-	// stmt, error := users_db.Client.Prepare(queryInsertUser)
-	// if error != nil {
-	// 	fmt.Println("error when trying to prepare save user statement")
-	// 	return errors.NewInternalServerError(fmt.Sprintf("error for saving user", error.Error()))
-	// }
-	// defer stmt.Close()
-
-	// // Exec return Result & Error
-	// insertResult, saveError := stmt.Exec(user.FirstName, user.LastName, user.Email, user.DateCreated)
-	// if saveError != nil {
-	// 	fmt.Println("error when trying to save user")
-	// 	return errors.NewInternalServerError(fmt.Sprintf("error for saving user", error.Error()))
-	// }
-
-	// userID, err := insertResult.LastInsertId()
-	// if err != nil {
-	// 	fmt.Println("error when trying to get last insert id after creating a new user")
-	// 	return errors.NewInternalServerError(fmt.Sprintf("error for saving the user to DB", error.Error()))
-	// }
-	// user.ID = userID
-
-	// return nil
 }
