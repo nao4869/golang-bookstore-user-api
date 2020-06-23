@@ -62,8 +62,11 @@ func (user *User) Get() *errors.RestError {
 func (user *User) Save() *errors.RestError {
 	// insert new user to DB - creating statement connect to the DB so we must defer after communicating with it
 	statement, error := users_db.Client.Prepare(queryInsertUser)
+	if error != nil {
+		fmt.Println("error when trying to prepare save user statement")
+		return errors.NewInternalServerError(fmt.Sprintf("error for saving user", error.Error()))
+	}
 	defer statement.Close()
-	//user.DateCreated = date.GetCurrentTimeString()
 
 	// Exec return Result & Error
 	insertResult, saveError := statement.Exec(user.FirstName, user.LastName, user.Email, user.DateCreated)
