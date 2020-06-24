@@ -2,7 +2,8 @@ package app
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/nao4869/golang-bookstore-user-api/controllers"
+	"github.com/nao4869/golang-bookstore-user-api/controllers/ping"
+	"github.com/nao4869/golang-bookstore-user-api/controllers/users"
 )
 
 var (
