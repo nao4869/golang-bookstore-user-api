@@ -77,7 +77,7 @@ func (user *User) Save() rest_errors.RestErr {
 
 	// Exec return Result & Error
 	insertResult, saveErr := stmt.Exec(user.FirstName, user.LastName, user.Email, user.DateCreated, user.Status, user.Password)
-	if err != nil {
+	if saveErr != nil {
 		logger.Error("error when trying to save user", saveErr)
 		return rest_errors.NewInternalServerError("error when tying to save user", errors.New("database error"))
 	}
