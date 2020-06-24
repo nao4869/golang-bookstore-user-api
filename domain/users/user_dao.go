@@ -1,11 +1,10 @@
 package users
 
 import (
+	"errors"
 	"strings"
 
-	// just for testing
-
-	"github.com/federicoleon/bookstore_users-api/utils/mysql_utils"
+	"github.com/federicoleon/bookstore_utils-go/logger"
 	"github.com/federicoleon/bookstore_utils-go/rest_errors"
 	"github.com/nao4869/golang-bookstore-user-api/datasources/mysql/users_db"
 )
@@ -47,18 +46,20 @@ const (
 // Get - user pointer in order to working on actual value in the memory
 func (user *User) Get() rest_errors.RestErr {
 	// connect to mysql DB
-	stmt, error := users_db.Client.Prepare(queryInsertUser)
-	if error != nil {
-		mysql_utils.ParseError(error)
+	stmt, err := users_db.Client.Prepare(queryGetUser)
+	if err != nil {
+		logger.Error("error when trying to prepare get user statement", err)
+		return rest_errors.NewInternalServerError("error when tying to get user", errors.New("database error"))
 	}
 	defer stmt.Close()
 
 	// the reason passing pointer is because we want to pass a copy but not updating the actual values
 	// query by user id and get single row
-	result := stmt.QueryRow(user.ID)
+	result := stmt.QueryRow(user.Id)
 
-	if getError := result.Scan(&user.ID, &user.FirstName, &user.LastName, &user.Email, &user.DateCreated); error != nil {
-		return mysql_utils.ParseError(getError)
+	if getErr := result.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Email, &user.DateCreated, &user.Status); getErr != nil {
+		logger.Error("error when trying to get user by id", getErr)
+		return rest_errors.NewInternalServerError("error when tying to get user", errors.New("database error"))
 	}
 	return nil
 }
@@ -68,19 +69,23 @@ func (user *User) Save() rest_errors.RestErr {
 	// insert new user to DB - creating statement connect to the DB so we must defer after communicating with it
 	stmt, error := users_db.Client.Prepare(queryInsertUser)
 	if error != nil {
-		mysql_utils.ParseError(error)
+		logger.Error("error when trying to prepare save user statement", err)
+		return rest_errors.NewInternalServerError("error when tying to save user", errors.New("database error"))
+		//mysql_utils.ParseError(error)
 	}
 	defer stmt.Close()
 
 	// Exec return Result & Error
-	insertResult, saveError := stmt.Exec(user.FirstName, user.LastName, user.Email, user.DateCreated, user.Status, user.Password)
-	if saveError != nil {
-		return mysql_utils.ParseError(saveError)
+	insertResult, err := stmt.Exec(user.FirstName, user.LastName, user.Email, user.DateCreated, user.Status, user.Password)
+	if err != nil {
+		logger.Error("error when trying to save user", saveErr)
+		return rest_errors.NewInternalServerError("error when tying to save user", errors.New("database error"))
 	}
 
 	userID, err := insertResult.LastInsertId()
 	if err != nil {
-		return mysql_utils.ParseError(err)
+		logger.Error("error when trying to get last insert id after creating a new user", err)
+		return rest_errors.NewInternalServerError("error when tying to save user", errors.New("database error"))
 	}
 	user.ID = userID
 	return nil
