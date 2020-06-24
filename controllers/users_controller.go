@@ -6,7 +6,7 @@ import (
 	"github.com/federicoleon/bookstore_utils-go/rest_errors"
 	"github.com/gin-gonic/gin"
 	"github.com/nao4869/golang-bookstore-user-api/domain/users"
-	services "github.com/nao4869/golang-bookstore-user-api/services"
+	"github.com/nao4869/golang-bookstore-user-api/services"
 )
 
 // CreateUser -

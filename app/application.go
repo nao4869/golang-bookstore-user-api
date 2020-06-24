@@ -17,5 +17,5 @@ func StartApplication() {
 	//router.GET("users/search", controllers.SearchUser)
 
 	router.POST("/users", controllers.CreateUser)
-	router.Run()
+	router.Run(":8080")
 }
