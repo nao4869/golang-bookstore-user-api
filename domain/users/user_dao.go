@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	// just for testing
-	_ "github.com/go-sql-driver/mysql"
+
 	"github.com/nao4869/golang-bookstore-user-api/datasources/mysql/users_db"
 	"github.com/nao4869/golang-bookstore-user-api/utils/errors"
 )
@@ -28,15 +28,9 @@ func (user *User) Validate() *errors.RestError {
 	return nil
 }
 
-// mock user DB
-// var (
-// 	usersDB = make(map[int64]*User)
-// )
-
 const (
 	queryInsertUser = "INSERT INTO users(first_name, last_name, email, date_created) VALUES(?, ?, ?, ?);"
 	queryGetUser    = "SELECT id, first_name, last_name, email, date_created FROM users WHERE id=?;"
-	errorNoRows     = "no rows in result set"
 )
 
 // Get - user pointer in order to working on actual value in the memory
@@ -52,20 +46,13 @@ func (user *User) Get() *errors.RestError {
 	// the reason passing pointer is because we want to pass a copy but not updating the actual values
 	// query by user id and get single row
 	result := stmt.QueryRow(user.ID)
-	if error := result.Scan(
-		&user.ID,
-		&user.FirstName,
-		&user.LastName,
-		&user.Email,
-		&user.DateCreated,
-	); error != nil {
-		if strings.Contains(error.Error(), errorNoRows) {
+
+	if getError := result.Scan(&user.ID, &user.FirstName, &user.LastName, &user.Email, &user.DateCreated); error != nil {
+		if strings.Contains(getError.Error(), errorNoRows) {
 			return errors.NewNotFoundError(fmt.Sprintf("user %d not found", user.ID))
 		}
-		fmt.Println(error)
 		return errors.NewInternalServerError(fmt.Sprintf("error when trying to retrieve user %d", user.ID))
 	}
-
 	return nil
 }
 
@@ -82,8 +69,7 @@ func (user *User) Save() *errors.RestError {
 	// Exec return Result & Error
 	insertResult, saveError := stmt.Exec(user.FirstName, user.LastName, user.Email, user.DateCreated)
 	if saveError != nil {
-		fmt.Println("error when trying to save user")
-		return errors.NewInternalServerError(fmt.Sprintf("error for saving user", saveError.Error()))
+		return errors.NewInternalServerError(fmt.Sprintf("error for saving user", error.Error()))
 	}
 
 	userID, err := insertResult.LastInsertId()
