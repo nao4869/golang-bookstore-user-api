@@ -55,9 +55,9 @@ func (user *User) Get() rest_errors.RestErr {
 
 	// the reason passing pointer is because we want to pass a copy but not updating the actual values
 	// query by user id and get single row
-	result := stmt.QueryRow(user.Id)
+	result := stmt.QueryRow(user.ID)
 
-	if getErr := result.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Email, &user.DateCreated, &user.Status); getErr != nil {
+	if getErr := result.Scan(&user.ID, &user.FirstName, &user.LastName, &user.Email, &user.DateCreated, &user.Status); getErr != nil {
 		logger.Error("error when trying to get user by id", getErr)
 		return rest_errors.NewInternalServerError("error when tying to get user", errors.New("database error"))
 	}
@@ -69,14 +69,14 @@ func (user *User) Save() rest_errors.RestErr {
 	// insert new user to DB - creating statement connect to the DB so we must defer after communicating with it
 	stmt, error := users_db.Client.Prepare(queryInsertUser)
 	if error != nil {
-		logger.Error("error when trying to prepare save user statement", err)
+		logger.Error("error when trying to prepare save user statement", error)
 		return rest_errors.NewInternalServerError("error when tying to save user", errors.New("database error"))
 		//mysql_utils.ParseError(error)
 	}
 	defer stmt.Close()
 
 	// Exec return Result & Error
-	insertResult, err := stmt.Exec(user.FirstName, user.LastName, user.Email, user.DateCreated, user.Status, user.Password)
+	insertResult, saveErr := stmt.Exec(user.FirstName, user.LastName, user.Email, user.DateCreated, user.Status, user.Password)
 	if err != nil {
 		logger.Error("error when trying to save user", saveErr)
 		return rest_errors.NewInternalServerError("error when tying to save user", errors.New("database error"))
