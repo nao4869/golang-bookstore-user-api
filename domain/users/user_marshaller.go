@@ -34,7 +34,7 @@ func (users Users) Marshall(isPublic bool) []interface{} {
 func (user *User) Marshall(isPublic bool) interface{} {
 	if isPublic {
 		return PublicUser{
-			Id:          user.Id,
+			ID:          user.ID,
 			DateCreated: user.DateCreated,
 			Status:      user.Status,
 		}
