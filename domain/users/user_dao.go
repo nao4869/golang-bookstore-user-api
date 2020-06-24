@@ -6,6 +6,7 @@ import (
 
 	// just for testing
 
+	"github.com/federicoleon/bookstore_users-api/utils/mysql_utils"
 	"github.com/nao4869/golang-bookstore-user-api/datasources/mysql/users_db"
 	"github.com/nao4869/golang-bookstore-user-api/utils/errors"
 )
@@ -29,6 +30,7 @@ func (user *User) Validate() *errors.RestError {
 }
 
 const (
+	errorNoRows     = "no rows in result set"
 	queryInsertUser = "INSERT INTO users(first_name, last_name, email, date_created) VALUES(?, ?, ?, ?);"
 	queryGetUser    = "SELECT id, first_name, last_name, email, date_created FROM users WHERE id=?;"
 )
@@ -61,23 +63,20 @@ func (user *User) Save() *errors.RestError {
 	// insert new user to DB - creating statement connect to the DB so we must defer after communicating with it
 	stmt, error := users_db.Client.Prepare(queryInsertUser)
 	if error != nil {
-		fmt.Println("error when trying to prepare save user statement")
-		return errors.NewInternalServerError(fmt.Sprintf("error for saving user", error.Error()))
+		mysql_utils.ParseError(error)
 	}
 	defer stmt.Close()
 
 	// Exec return Result & Error
 	insertResult, saveError := stmt.Exec(user.FirstName, user.LastName, user.Email, user.DateCreated)
 	if saveError != nil {
-		return errors.NewInternalServerError(fmt.Sprintf("error for saving user", error.Error()))
+		mysql_utils.ParseError(saveError)
 	}
 
 	userID, err := insertResult.LastInsertId()
 	if err != nil {
-		fmt.Println("error when trying to get last insert id after creating a new user")
-		return errors.NewInternalServerError(fmt.Sprintf("error for saving the user to DB", err.Error()))
+		mysql_utils.ParseError(err)
 	}
 	user.ID = userID
-
 	return nil
 }
