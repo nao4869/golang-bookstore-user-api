@@ -1,10 +1,10 @@
 package services
 
 import (
-	"github.com/nao4869/bookstore_users-api/utils/crypto_utils"
-	"github.com/nao4869/bookstore_users-api/utils/date_utils"
-	"github.com/nao4869/bookstore_utils-go/rest_errors"
 	"github.com/nao4869/golang-bookstore-user-api/domain/users"
+	"github.com/nao4869/golang-bookstore-user-api/utils/rest_errors"
+	"github.com/nao4869/golang-bookstore-user-api/utils/crypto_utils"
+	"github.com/nao4869/golang-bookstore-user-api/utils/date_utils"
 )
 
 var (

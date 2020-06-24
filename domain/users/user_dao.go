@@ -2,10 +2,10 @@ package users
 
 import (
 	"errors"
+	"fmt"
 
-	"github.com/federicoleon/bookstore_utils-go/logger"
-	"github.com/federicoleon/bookstore_utils-go/rest_errors"
 	"github.com/nao4869/golang-bookstore-user-api/datasources/mysql/users_db"
+	"github.com/nao4869/golang-bookstore-user-api/utils/rest_errors"
 )
 
 const (
@@ -19,7 +19,6 @@ func (user *User) Get() rest_errors.RestErr {
 	// connect to mysql DB
 	stmt, err := users_db.Client.Prepare(queryGetUser)
 	if err != nil {
-		logger.Error("error when trying to prepare get user statement", err)
 		return rest_errors.NewInternalServerError("error when tying to get user", errors.New("database error"))
 	}
 	defer stmt.Close()
@@ -29,7 +28,6 @@ func (user *User) Get() rest_errors.RestErr {
 	result := stmt.QueryRow(user.ID)
 
 	if getErr := result.Scan(&user.ID, &user.FirstName, &user.LastName, &user.Email, &user.DateCreated, &user.Status); getErr != nil {
-		logger.Error("error when trying to get user by id", getErr)
 		return rest_errors.NewInternalServerError("error when tying to get user", errors.New("database error"))
 	}
 	return nil
@@ -40,22 +38,21 @@ func (user *User) Save() rest_errors.RestErr {
 	// insert new user to DB - creating statement connect to the DB so we must defer after communicating with it
 	stmt, error := users_db.Client.Prepare(queryInsertUser)
 	if error != nil {
-		logger.Error("error when trying to prepare save user statement", error)
+		fmt.Println(error)
 		return rest_errors.NewInternalServerError("error when tying to save user", errors.New("database error"))
-		//mysql_utils.ParseError(error)
 	}
 	defer stmt.Close()
 
 	// Exec return Result & Error
 	insertResult, saveErr := stmt.Exec(user.FirstName, user.LastName, user.Email, user.DateCreated, user.Status, user.Password)
 	if saveErr != nil {
-		logger.Error("error when trying to save user", saveErr)
+		fmt.Println(saveErr)
 		return rest_errors.NewInternalServerError("error when tying to save user", errors.New("database error"))
 	}
 
 	userID, err := insertResult.LastInsertId()
 	if err != nil {
-		logger.Error("error when trying to get last insert id after creating a new user", err)
+		fmt.Println(err)
 		return rest_errors.NewInternalServerError("error when tying to save user", errors.New("database error"))
 	}
 	user.ID = userID
