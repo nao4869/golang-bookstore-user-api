@@ -12,11 +12,7 @@ var (
 
 // StartApplication -
 func StartApplication() {
-	// url endpoints mappings
 	router.GET("/ping", ping.Ping)
-	//router.GET("/users/:user_id", controllers.GetUser)
-	//router.GET("users/search", controllers.SearchUser)
-
-	router.POST("/users", users.CreateUser)
+	router.POST("/users", users.Create)
 	router.Run(":8080")
 }

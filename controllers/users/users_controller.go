@@ -9,8 +9,8 @@ import (
 	"github.com/nao4869/golang-bookstore-user-api/services"
 )
 
-// CreateUser -
-func CreateUser(c *gin.Context) {
+// Create -
+func Create(c *gin.Context) {
 	var user users.User
 	if err := c.ShouldBindJSON(&user); err != nil {
 		restErr := rest_errors.NewBadRequestError("invalid json body")
@@ -23,7 +23,7 @@ func CreateUser(c *gin.Context) {
 		c.JSON(saveErr.Status(), saveErr)
 		return
 	}
-	c.JSON(http.StatusCreated, result)
+	c.JSON(http.StatusCreated, result.Marshall(c.GetHeader("X-Public") == "true"))
 }
 
 // GetUser -
