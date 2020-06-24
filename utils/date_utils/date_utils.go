@@ -1,17 +1,25 @@
-package date
+package date_utils
 
-import "time"
-
-const (
-	apiDateLayout = "2020-06-21T15:04:052"
+import (
+	"time"
 )
 
-// GetCurrentTime -
-func GetCurrentTime() time.Time {
+const (
+	apiDateLayout = "2006-01-02T15:04:05Z"
+	apiDbLayout   = "2006-01-02 15:04:05"
+)
+
+// GetNow -
+func GetNow() time.Time {
 	return time.Now().UTC()
 }
 
-// GetCurrentTimeString -
-func GetCurrentTimeString() string {
-	return GetCurrentTime().Format(apiDateLayout)
+// GetNowString -
+func GetNowString() string {
+	return GetNow().Format(apiDateLayout)
+}
+
+// GetNowDBFormat -
+func GetNowDBFormat() string {
+	return GetNow().Format(apiDbLayout)
 }

@@ -1,7 +1,9 @@
 package services
 
 import (
-	"github.com/federicoleon/bookstore_utils-go/rest_errors"
+	"github.com/nao4869/bookstore_users-api/utils/crypto_utils"
+	"github.com/nao4869/bookstore_users-api/utils/date_utils"
+	"github.com/nao4869/bookstore_utils-go/rest_errors"
 	"github.com/nao4869/golang-bookstore-user-api/domain/users"
 )
 
@@ -32,10 +34,9 @@ func (s *usersService) CreateUser(user users.User) (*users.User, rest_errors.Res
 		return nil, err
 	}
 
-	// user.Status = users.StatusActive
-	// user.DateCreated = date_utils.GetNowDBFormat()
-	// user.Password = crypto_utils.GetMd5(user.Password)
-
+	user.Status = users.StatusActive
+	user.DateCreated = date_utils.GetNowDBFormat()
+	user.Password = crypto_utils.GetMd5(user.Password)
 	if err := user.Save(); err != nil {
 		return nil, err
 	}
