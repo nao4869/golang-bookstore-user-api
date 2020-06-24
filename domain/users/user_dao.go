@@ -6,7 +6,7 @@ import (
 
 	// just for testing
 	_ "github.com/go-sql-driver/mysql"
-	users_db "github.com/nao4869/golang-bookstore-user-api/datasources/mysql/users_db"
+	"github.com/nao4869/golang-bookstore-user-api/datasources/mysql/users_db"
 	"github.com/nao4869/golang-bookstore-user-api/utils/errors"
 )
 
