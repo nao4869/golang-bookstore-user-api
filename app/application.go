@@ -12,10 +12,10 @@ var (
 // StartApplication -
 func StartApplication() {
 	// url endpoints mappings
-	router.GET("/ping", controllers.Ping)
+	router.GET("/ping", ping.Ping)
 	//router.GET("/users/:user_id", controllers.GetUser)
 	//router.GET("users/search", controllers.SearchUser)
 
-	router.POST("/users", controllers.CreateUser)
+	router.POST("/users", users.CreateUser)
 	router.Run(":8080")
 }
