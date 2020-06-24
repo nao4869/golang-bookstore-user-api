@@ -7,7 +7,7 @@ import (
 	"os"
 
 	// test
-	_ "github.com/go-sql-driver/mysql"
+	"github.com/go-sql-driver/mysql"
 )
 
 const (
