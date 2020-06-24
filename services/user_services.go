@@ -1,12 +1,12 @@
 package services
 
 import (
+	"github.com/federicoleon/bookstore_utils-go/rest_errors"
 	"github.com/nao4869/golang-bookstore-user-api/domain/users"
-	"github.com/nao4869/golang-bookstore-user-api/utils/errors"
 )
 
 // GetUser -
-func GetUser(userID int64) (*users.User, *errors.RestError) {
+func GetUser(userID int64) (*users.User, rest_errors.RestErr) {
 	result := &users.User{ID: userID}
 	if error := result.Get(); error != nil {
 		return nil, error
@@ -16,7 +16,7 @@ func GetUser(userID int64) (*users.User, *errors.RestError) {
 
 // CreateUser - must not return both users and errors - only return one
 // if we return nil, nil - this will cause many error in users_controllers when handling nil error and returing nil result etc
-func CreateUser(user users.User) (*users.User, *errors.RestError) {
+func CreateUser(user users.User) (*users.User, rest_errors.RestErr) {
 	if error := user.Validate(); error != nil {
 		return nil, error
 	}
